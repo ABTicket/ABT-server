@@ -23,4 +23,8 @@ logger定义于：`src/log/logInit.go`
        Log.Critical("critival")
    ```
 
+   输出：
+
+   <img src="./asset/log_output.png" style="zoom:60%">
+
 存在问题：重新启动程序后，将字符串写入log.txt文件时，是从文件开头开始写，导致重新修改了文件头的内容，而文件尾的内容不变。
