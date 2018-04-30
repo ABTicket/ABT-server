@@ -1,0 +1,28 @@
+package controllers
+
+import (
+	"fmt"
+
+	"github.com/gorilla/mux"
+)
+
+type RoutesList []Routes
+
+func NewRouter() *mux.Router {
+	router := mux.NewRouter().StrictSlash(true)
+	for _, routes := range routesList {
+		for _, route := range routes {
+			fmt.Println("register controller: ", route.Method, route.Pattern)
+			router.
+				Methods(route.Method).
+				Path(route.Pattern).
+				Name(route.Name).
+				Handler(route.HandlerFunc)
+		}
+	}
+	return router
+}
+
+var routesList RoutesList = RoutesList{
+	UserRoutes,
+}
