@@ -44,24 +44,35 @@ func UserGetAll(w http.ResponseWriter, r *http.Request) {
 // post data: {"name":"c","password":"c"}
 // password需要在客户端先经过bcrypt加密
 func UserAddOne(w http.ResponseWriter, r *http.Request) {
+	// 1. load request's body
 	newUser := User{}
 	ok := utils.LoadRequestBody(r, "insert user", &newUser)
 	if !ok {
 		utils.FailureResponse(&w, 500, "新建用户失败", "")
+		return
 	}
+	// 2. verify the user existed or not 
+	existedUser := User{}
+	err := Db["users"].Find(bson.M{"name": newUser.Name}).One(&existedUser)
+	if err == nil {
+		Log.Errorf("insert user failed: user %s is existed", newUser.Name)
+		utils.FailureResponse(&w, 400, "用户已存在", "")
+		return
+	}
+	// 3. set a new id
 	// 由于将User.Id解释成_id(见user定义), 所以user.Id需要自己指定, 没有这一步会导致插入失败
 	newUser.Id = bson.NewObjectId()
 	// 密码加密
 	//hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	//newUser.Password = string(hashedPassword)
-
-	err := Db["users"].Insert(&newUser)
+	// 4. insert into db
+	err = Db["users"].Insert(&newUser)
 	if err != nil {
 		Log.Error("insert user falied: insert into db failed, ", err)
 		utils.FailureResponse(&w, 500, "添加用户失败", "")
 		return
 	}
-
+	// 5. success
 	Log.Notice("add one user successfully")
 	utils.SuccessResponse(&w, 200, "添加用户成功", "")
 }
@@ -78,13 +89,13 @@ func UserUpdateOne(w http.ResponseWriter, r *http.Request) {
 	}
 	newUser.Id = bson.ObjectIdHex(userId)
 	// 3. 通过session验证是否有修改权限
-	session, _ := SessionGet(w, r, "user")
+	/*session, _ := SessionGet(w, r, "user")
 	sessionUser, _ := session["user"].(User)
 	if sessionUser.Id != newUser.Id {
 		Log.Error("no privilege to change user detail")
 		utils.FailureResponse(&w, 400, "没有权限修改用户信息", "")
 		return
-	}
+	}*/
 	// 4. 修改数据
 	// convert structure to bson.M, used to update
 	updateData, _ := bson.Marshal(&newUser)
@@ -190,11 +201,11 @@ func UserLogout(w http.ResponseWriter, r *http.Request) {
 
 // 后四个函数涉及到session，需要浏览器进行测试
 var UserRoutes Routes = Routes{
-	Route{"UserGetOne", "GET", "/user/{userId}", UserGetOne},
+	Route{"UserGetOne", "GET", "/user/{userId}", BasicAuth(UserGetOne)},
 	Route{"UserGetAll", "GET", "/user/", UserGetAll},
 	Route{"UserAddOne", "POST", "/user/", UserAddOne},
-	Route{"UserUpdateOne", "PUT", "/user/{userId}", UserUpdateOne},
-	Route{"UserUpdatePassword", "POST", "/user/updatePassword", UserUpdatePassword},
+	Route{"UserUpdateOne", "PUT", "/user/{userId}", BasicAuth(UserUpdateOne)},
+	Route{"UserUpdatePassword", "POST", "/user/updatePassword", BasicAuth(UserUpdatePassword)},
 	// Route { "UserDeleteOne",      "DELETE", "/user/{userId}",       UserDeleteOne, },
 	Route{"UserLogin", "POST", "/user/login", UserLogin},
 	Route{"UserLogout", "GET", "/user/logout", UserLogout},
