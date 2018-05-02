@@ -8,11 +8,12 @@ import (
 
 type RoutesList []Routes
 
+// NewRouter register all routes defined in RoutesList
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, routes := range routesList {
 		for _, route := range routes {
-			fmt.Println("register controller: ", route.Method, route.Pattern)
+			fmt.Println("register controller: ", route.Name, route.Method, route.Pattern)
 			router.
 				Methods(route.Method).
 				Path(route.Pattern).
@@ -23,6 +24,7 @@ func NewRouter() *mux.Router {
 	return router
 }
 
+// 新增加的路由，只需将其添加到此数组即可
 var routesList RoutesList = RoutesList{
 	UserRoutes,
 }

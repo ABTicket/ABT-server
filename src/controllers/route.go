@@ -12,3 +12,14 @@ type Route struct {
 }
 
 type Routes []Route
+
+/*
+ *func errCheck(err Error, logMsg, resMsg string, data interface{}) bool {
+ *    if err != nil {
+ *        Log.Error("get all users failed")
+ *        utils.FailureResponse(&w, "获取用户列表失败", "")
+ *        return true
+ *    }
+ *    return false
+ *}
+ */
