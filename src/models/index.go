@@ -9,8 +9,8 @@ import (
 )
 
 var Db = make(map[string]*mgo.Collection)
-var modelsList = []string {
-	"users",
+var modelsList = []string{
+	"users", "films", "cinemas", "filmShows",
 }
 
 func DbInit() {
@@ -26,4 +26,3 @@ func DbInit() {
 		Db[model] = session.DB(configs.MONGODB_NAME).C(model)
 	}
 }
-

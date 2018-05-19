@@ -1,4 +1,7 @@
-user doesn't login
- user lzl is existed
-ecookie: error - caused by: securecookie: error - caused by: gob: type not registered for interface: models.User
-t {$set: BinData(0, 34000000075F6964005AE7357D9BC853511A00A962026E616D6500030000006161000270617373776F7264000300000061610000)}
+insert filmShow failed: cinema is not existed
+ BSON document
+ailed: cinema is not existed
+insert filmShow failed: film is not existed
+sert filmShow failed: film is not existed
+insert filmShow failed: film is not existed
+16D6500030000006161000270617373776F7264000300000061610000)}
