@@ -1,6 +1,5 @@
-insert filmShow failed: cinema is not existed
- BSON document
-ailed: cinema is not existed
+insert film  falied: failed to decode data from json to structure
+: cinema is not existed
 insert filmShow failed: film is not existed
 sert filmShow failed: film is not existed
 insert filmShow failed: film is not existed
