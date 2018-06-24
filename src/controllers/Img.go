@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"fmt"
+	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io"
@@ -89,10 +90,17 @@ func UploadImg(w http.ResponseWriter, r *http.Request) {
 	}
 
 	Log.Notice("upload image successfully")
-	utils.SuccessResponse(&w, 200, "上传图片成功", "./image/"+img.ImgUrl)
+	utils.SuccessResponse(&w, 200, "上传图片成功", img.ImgUrl)
+}
+
+func DownloadImg(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	imgPath := vars["imgUrl"]
+	http.ServeFile(w, r, "./../image/"+imgPath)
 }
 
 var ImgRoutes Routes = Routes{
 	Route{"UploadImg", "POST", "/uploadImg", UploadImg},
-	Route{"Entrance", "GET", "/entrance", Entrance},
+	Route{"DownloadImg", "GET", "/downloadImg/{imgUrl}", DownloadImg},
+	Route{"TestUploadImg", "GET", "/testImg", Entrance},
 }
