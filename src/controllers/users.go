@@ -21,12 +21,12 @@ func UserGetOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["users"].FindId(bson.ObjectIdHex(userId)).One(&user)
 	if err != nil {
 		Log.Errorf("Get user id: %s failed, %v", userId, err)
-		utils.FailureResponse(&w, 500, "获取用户信息失败", "")
+		utils.FailureResponse(&w, "获取用户信息失败", "")
 		return
 	}
 
 	Log.Noticef("Get user successfully: %s", user)
-	utils.SuccessResponse(&w, 200, "获取用户信息成功", user)
+	utils.SuccessResponse(&w, "获取用户信息成功", user)
 }
 
 func UserGetAll(w http.ResponseWriter, r *http.Request) {
@@ -34,11 +34,11 @@ func UserGetAll(w http.ResponseWriter, r *http.Request) {
 	err := Db["users"].Find(nil).All(&users)
 	if err != nil {
 		Log.Errorf("get all users failed, %v", err)
-		utils.FailureResponse(&w, 500, "获取用户列表失败", "")
+		utils.FailureResponse(&w, "获取用户列表失败", "")
 		return
 	}
 	Log.Notice("get all user successfully")
-	utils.SuccessResponse(&w, 200, "获取用户列表成功", users)
+	utils.SuccessResponse(&w, "获取用户列表成功", users)
 }
 
 // post data: {"name":"c","password":"c"}, 首字母大写小写皆可
@@ -48,7 +48,7 @@ func UserAddOne(w http.ResponseWriter, r *http.Request) {
 	newUser := User{}
 	ok := utils.LoadRequestBody(r, "insert user", &newUser)
 	if !ok {
-		utils.FailureResponse(&w, 500, "新建用户失败", "")
+		utils.FailureResponse(&w, "新建用户失败", "")
 		return
 	}
 	// 2. verify the user existed or not
@@ -56,7 +56,7 @@ func UserAddOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["users"].Find(bson.M{"name": newUser.Name}).One(&existedUser)
 	if err == nil {
 		Log.Errorf("insert user failed: user %s is existed", newUser.Name)
-		utils.FailureResponse(&w, 400, "用户已存在", "")
+		utils.FailureResponse(&w, "用户已存在", "")
 		return
 	}
 	// 3. set a new id
@@ -69,12 +69,12 @@ func UserAddOne(w http.ResponseWriter, r *http.Request) {
 	err = Db["users"].Insert(&newUser)
 	if err != nil {
 		Log.Error("insert user falied: insert into db failed, ", err)
-		utils.FailureResponse(&w, 500, "添加用户失败", "")
+		utils.FailureResponse(&w, "添加用户失败", "")
 		return
 	}
 	// 5. success
 	Log.Notice("add one user successfully")
-	utils.SuccessResponse(&w, 200, "添加用户成功", "")
+	utils.SuccessResponse(&w, "添加用户成功", "")
 }
 
 func UserUpdateOne(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +85,7 @@ func UserUpdateOne(w http.ResponseWriter, r *http.Request) {
 	newUser := User{}
 	ok := utils.LoadRequestBody(r, "update user", &newUser)
 	if !ok {
-		utils.FailureResponse(&w, 500, "修改用户信息失败", "")
+		utils.FailureResponse(&w, "修改用户信息失败", "")
 	}
 	newUser.Id = bson.ObjectIdHex(userId)
 	// 3. 通过session验证是否有修改权限
@@ -93,7 +93,7 @@ func UserUpdateOne(w http.ResponseWriter, r *http.Request) {
 	sessionUser, _ := session["user"].(User)
 	if sessionUser.Id != newUser.Id {
 		Log.Error("no privilege to change user detail")
-		utils.FailureResponse(&w, 400, "没有权限修改用户信息", "")
+		utils.FailureResponse(&w, "没有权限修改用户信息", "")
 		return
 	}
 	// 4. 修改数据
@@ -105,12 +105,12 @@ func UserUpdateOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["users"].Update(bson.M{"_id": newUser.Id}, bson.M{"$set": updateUser})
 	if err != nil {
 		Log.Error("update user falied: failed to update data into db, ", err)
-		utils.FailureResponse(&w, 500, "修改用户信息失败", "")
+		utils.FailureResponse(&w, "修改用户信息失败", "")
 		return
 	}
 	// 5. 成功返回
 	Log.Notice("update user successfully")
-	utils.SuccessResponse(&w, 200, "修改用户成功", "")
+	utils.SuccessResponse(&w, "修改用户成功", "")
 }
 
 // POST data: {"oldPassword": "", "newPassword": ""}
@@ -121,7 +121,7 @@ func UserUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	ok := utils.LoadRequestBody(r, "update password", &passwords)
 	Log.Noticef("passwords: %v", passwords)
 	if !ok {
-		utils.FailureResponse(&w, 500, "修改密码失败", "")
+		utils.FailureResponse(&w, "修改密码失败", "")
 	}
 	// 2. get session
 	session, _ := SessionGet(w, r, "user")
@@ -130,7 +130,7 @@ func UserUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	err := bcrypt.CompareHashAndPassword([]byte(passwords["oldPassword"]), []byte(sessionUser.Password))
 	if err != nil {
 		Log.Error("update password failed: old password is incorrect")
-		utils.FailureResponse(&w, 400, "原密码错误", "")
+		utils.FailureResponse(&w, "原密码错误", "")
 		return
 	}
 	// 4. update data in db
@@ -138,12 +138,12 @@ func UserUpdatePassword(w http.ResponseWriter, r *http.Request) {
 		bson.M{"$set": bson.M{"password": passwords["newPassword"]}})
 	if err != nil {
 		Log.Error("update password failed: write db failed, ", err)
-		utils.FailureResponse(&w, 500, "修改密码失败", "")
+		utils.FailureResponse(&w, "修改密码失败", "")
 		return
 	}
 	// 5. success
 	Log.Notice("update password successfully")
-	utils.SuccessResponse(&w, 200, "修改密码成功", "")
+	utils.SuccessResponse(&w, "修改密码成功", "")
 }
 
 // 不能提供删除用户的功能，因此此函数只作为示例，其他如电影片则提供删除功能
@@ -153,12 +153,12 @@ func UserDeleteOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["users"].Remove(bson.M{"_id": bson.ObjectIdHex(userId)})
 	if err != nil {
 		Log.Error("delete user from db failed: ", err)
-		utils.FailureResponse(&w, 500, "删除用户失败", "")
+		utils.FailureResponse(&w, "删除用户失败", "")
 		return
 	}
 
 	Log.Notice("delete user successfully")
-	utils.SuccessResponse(&w, 200, "删除用户成功", "")
+	utils.SuccessResponse(&w, "删除用户成功", "")
 }
 
 // UserLogin should bind a session on request
@@ -167,21 +167,21 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	user := User{}
 	ok := utils.LoadRequestBody(r, "user login", &user)
 	if !ok {
-		utils.FailureResponse(&w, 500, "登录失败", "")
+		utils.FailureResponse(&w, "登录失败", "")
 	}
 	// 2. 从db中取出用户信息
 	existedUser := User{}
 	err := Db["users"].Find(bson.M{"name": user.Name}).One(&existedUser)
 	if err != nil {
 		Log.Error("user login failed: user not found, ", err)
-		utils.FailureResponse(&w, 400, "登录失败,用户不存在", "")
+		utils.FailureResponse(&w, "登录失败,用户不存在", "")
 		return
 	}
 	// 3. 验证密码是否正确
 	err = bcrypt.CompareHashAndPassword([]byte(existedUser.Password), []byte(user.Password))
 	if err != nil {
 		Log.Error("user login failed: password is incorrect, ")
-		utils.FailureResponse(&w, 400, "登录失败,密码错误", "")
+		utils.FailureResponse(&w, "登录失败,密码错误", "")
 		return
 	}
 	// 4. user login successfully, save user into session
@@ -190,7 +190,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	_ = SessionSet(w, r, "user", session)
 	// 5. response successfully
 	Log.Noticef("user %v login successfully", existedUser.Name)
-	utils.SuccessResponse(&w, 200, "登录成功", "")
+	utils.SuccessResponse(&w, "登录成功", "")
 }
 
 func UserRegister(w http.ResponseWriter, r *http.Request) {
@@ -200,7 +200,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 // UserLogout should delete the session bind on request
 func UserLogout(w http.ResponseWriter, r *http.Request) {
 	_ = SessionDel(w, r, "user")
-	utils.SuccessResponse(&w, 200, "登出成功", "")
+	utils.SuccessResponse(&w, "登出成功", "")
 }
 
 // 后四个函数涉及到session，需要浏览器进行测试

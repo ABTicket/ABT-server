@@ -20,12 +20,12 @@ func FilmGetOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["films"].FindId(bson.ObjectIdHex(filmId)).One(&film)
 	if err != nil {
 		Log.Errorf("Get film id: %s failed, %v", filmId, err)
-		utils.FailureResponse(&w, 500, "获取电影信息失败", "")
+		utils.FailureResponse(&w, "获取电影信息失败", "")
 		return
 	}
 
 	Log.Noticef("Get film successfully: %s", film)
-	utils.SuccessResponse(&w, 200, "获取电影信息成功", film)
+	utils.SuccessResponse(&w, "获取电影信息成功", film)
 }
 
 func FilmGetAll(w http.ResponseWriter, r *http.Request) {
@@ -33,11 +33,11 @@ func FilmGetAll(w http.ResponseWriter, r *http.Request) {
 	err := Db["films"].Find(nil).All(&films)
 	if err != nil {
 		Log.Errorf("get all films failed, %v", err)
-		utils.FailureResponse(&w, 500, "获取电影列表失败", "")
+		utils.FailureResponse(&w, "获取电影列表失败", "")
 		return
 	}
 	Log.Notice("get all film successfully")
-	utils.SuccessResponse(&w, 200, "获取电影列表成功", films)
+	utils.SuccessResponse(&w, "获取电影列表成功", films)
 }
 
 func FilmAddOne(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +45,7 @@ func FilmAddOne(w http.ResponseWriter, r *http.Request) {
 	newFilm := Film{}
 	ok := utils.LoadRequestBody(r, "insert film", &newFilm)
 	if !ok {
-		utils.FailureResponse(&w, 500, "新建电影失败", "")
+		utils.FailureResponse(&w, "新建电影失败", "")
 		return
 	}
 	// 2. verify the film existed or not
@@ -53,7 +53,7 @@ func FilmAddOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["films"].Find(bson.M{"name": newFilm.Name}).One(&existedFilm)
 	if err == nil {
 		Log.Errorf("insert film failed: film %s is existed", newFilm.Name)
-		utils.FailureResponse(&w, 400, "电影已存在", "")
+		utils.FailureResponse(&w, "电影已存在", "")
 		return
 	}
 	// 3. set a new id
@@ -62,12 +62,12 @@ func FilmAddOne(w http.ResponseWriter, r *http.Request) {
 	err = Db["films"].Insert(&newFilm)
 	if err != nil {
 		Log.Error("insert film falied: insert into db failed, ", err)
-		utils.FailureResponse(&w, 500, "添加电影失败", "")
+		utils.FailureResponse(&w, "添加电影失败", "")
 		return
 	}
 	// 5. success
 	Log.Notice("add one film successfully")
-	utils.SuccessResponse(&w, 200, "添加电影成功", "")
+	utils.SuccessResponse(&w, "添加电影成功", "")
 }
 
 func FilmUpdateOne(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func FilmUpdateOne(w http.ResponseWriter, r *http.Request) {
 	newFilm := Film{}
 	ok := utils.LoadRequestBody(r, "update film", &newFilm)
 	if !ok {
-		utils.FailureResponse(&w, 500, "修改电影信息失败", "")
+		utils.FailureResponse(&w, "修改电影信息失败", "")
 	}
 	newFilm.Id = bson.ObjectIdHex(filmId)
 
@@ -91,7 +91,7 @@ func FilmUpdateOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["films"].Update(bson.M{"_id": newFilm.Id}, bson.M{"$set": updateFilm})
 	if err != nil {
 		Log.Error("update film failed: failed to update data into db, ", err)
-		utils.FailureResponse(&w, 500, "修改电影信息失败", "")
+		utils.FailureResponse(&w, "修改电影信息失败", "")
 		return
 	}
 
@@ -100,7 +100,7 @@ func FilmUpdateOne(w http.ResponseWriter, r *http.Request) {
 
 	// 4. 成功返回
 	Log.Notice("update film successfully")
-	utils.SuccessResponse(&w, 200, "修改电影成功", "")
+	utils.SuccessResponse(&w, "修改电影成功", "")
 }
 
 func FilmDeleteOne(w http.ResponseWriter, r *http.Request) {
@@ -109,7 +109,7 @@ func FilmDeleteOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["films"].Remove(bson.M{"_id": bson.ObjectIdHex(filmId)})
 	if err != nil {
 		Log.Error("delete film from db failed: ", err)
-		utils.FailureResponse(&w, 500, "删除电影失败", "")
+		utils.FailureResponse(&w, "删除电影失败", "")
 		return
 	}
 
@@ -117,7 +117,7 @@ func FilmDeleteOne(w http.ResponseWriter, r *http.Request) {
 	// ...
 
 	Log.Notice("delete film successfully")
-	utils.SuccessResponse(&w, 200, "删除电影成功", "")
+	utils.SuccessResponse(&w, "删除电影成功", "")
 }
 
 var FilmRoutes Routes = Routes{

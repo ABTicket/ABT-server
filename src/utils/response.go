@@ -11,24 +11,25 @@ import (
 )
 
 type IResponse struct {
+	Code int32
 	Msg  string
 	Data interface{}
 }
 
-func SuccessResponse(wptr *http.ResponseWriter, status int, msg string, data interface{}) {
+func SuccessResponse(wptr *http.ResponseWriter, msg string, data interface{}) {
 	w := *wptr
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(status)
-	res := IResponse{msg, data}
+	w.WriteHeader(200)
+	res := IResponse{200, msg, data}
 	resData, _ := json.Marshal(res)
 	fmt.Fprintf(w, "%s", resData)
 }
 
-func FailureResponse(wptr *http.ResponseWriter, status int, msg string, data interface{}) {
+func FailureResponse(wptr *http.ResponseWriter, msg string, data interface{}) {
 	w := *wptr
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(status)
-	res := IResponse{msg, data}
+	w.WriteHeader(200)
+	res := IResponse{400, msg, data}
 	resData, _ := json.Marshal(res)
 	fmt.Fprintf(w, "%s", resData)
 }

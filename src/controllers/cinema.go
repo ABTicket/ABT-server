@@ -20,12 +20,12 @@ func CinemaGetOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["cinemas"].FindId(bson.ObjectIdHex(cinemaId)).One(&cinema)
 	if err != nil {
 		Log.Errorf("Get cinema id: %s failed, %v", cinemaId, err)
-		utils.FailureResponse(&w, 500, "获取电影院信息失败", "")
+		utils.FailureResponse(&w, "获取电影院信息失败", "")
 		return
 	}
 
 	Log.Noticef("Get cinema successfully: %s", cinema)
-	utils.SuccessResponse(&w, 200, "获取电影院信息成功", cinema)
+	utils.SuccessResponse(&w, "获取电影院信息成功", cinema)
 }
 
 func CinemaGetAll(w http.ResponseWriter, r *http.Request) {
@@ -33,11 +33,11 @@ func CinemaGetAll(w http.ResponseWriter, r *http.Request) {
 	err := Db["cinemas"].Find(nil).All(&cinemas)
 	if err != nil {
 		Log.Errorf("get all cinemas failed, %v", err)
-		utils.FailureResponse(&w, 500, "获取电影院列表失败", "")
+		utils.FailureResponse(&w, "获取电影院列表失败", "")
 		return
 	}
 	Log.Notice("get all cinema successfully")
-	utils.SuccessResponse(&w, 200, "获取电影院列表成功", cinemas)
+	utils.SuccessResponse(&w, "获取电影院列表成功", cinemas)
 }
 
 func CinemaAddOne(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +45,7 @@ func CinemaAddOne(w http.ResponseWriter, r *http.Request) {
 	newCinema := Cinema{}
 	ok := utils.LoadRequestBody(r, "insert cinema", &newCinema)
 	if !ok {
-		utils.FailureResponse(&w, 500, "新建电影院失败", "")
+		utils.FailureResponse(&w, "新建电影院失败", "")
 		return
 	}
 	// 2. verify the cinema existed or not
@@ -53,7 +53,7 @@ func CinemaAddOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["cinemas"].Find(bson.M{"name": newCinema.Name}).One(&existedCinema)
 	if err == nil {
 		Log.Errorf("insert cinema failed: cinema %s is existed", newCinema.Name)
-		utils.FailureResponse(&w, 400, "电影院已存在", "")
+		utils.FailureResponse(&w, "电影院已存在", "")
 		return
 	}
 	// 3. set a new id
@@ -62,12 +62,12 @@ func CinemaAddOne(w http.ResponseWriter, r *http.Request) {
 	err = Db["cinemas"].Insert(&newCinema)
 	if err != nil {
 		Log.Error("insert cinema falied: insert into db failed, ", err)
-		utils.FailureResponse(&w, 500, "添加电影院失败", "")
+		utils.FailureResponse(&w, "添加电影院失败", "")
 		return
 	}
 	// 5. success
 	Log.Notice("add one cinema successfully")
-	utils.SuccessResponse(&w, 200, "添加电影院成功", "")
+	utils.SuccessResponse(&w, "添加电影院成功", "")
 }
 
 func CinemaUpdateOne(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func CinemaUpdateOne(w http.ResponseWriter, r *http.Request) {
 	newCinema := Cinema{}
 	ok := utils.LoadRequestBody(r, "update cinema", &newCinema)
 	if !ok {
-		utils.FailureResponse(&w, 500, "修改电影院信息失败", "")
+		utils.FailureResponse(&w, "修改电影院信息失败", "")
 	}
 	newCinema.Id = bson.ObjectIdHex(cinemaId)
 
@@ -91,7 +91,7 @@ func CinemaUpdateOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["cinemas"].Update(bson.M{"_id": newCinema.Id}, bson.M{"$set": updateCinema})
 	if err != nil {
 		Log.Error("update cinema failed: failed to update data into db, ", err)
-		utils.FailureResponse(&w, 500, "修改电影院信息失败", "")
+		utils.FailureResponse(&w, "修改电影院信息失败", "")
 		return
 	}
 
@@ -100,7 +100,7 @@ func CinemaUpdateOne(w http.ResponseWriter, r *http.Request) {
 
 	// 4. 成功返回
 	Log.Notice("update cinema successfully")
-	utils.SuccessResponse(&w, 200, "修改电影院成功", "")
+	utils.SuccessResponse(&w, "修改电影院成功", "")
 }
 
 func CinemaDeleteOne(w http.ResponseWriter, r *http.Request) {
@@ -109,7 +109,7 @@ func CinemaDeleteOne(w http.ResponseWriter, r *http.Request) {
 	err := Db["cinemas"].Remove(bson.M{"_id": bson.ObjectIdHex(cinemaId)})
 	if err != nil {
 		Log.Error("delete cinema from db failed: ", err)
-		utils.FailureResponse(&w, 500, "删除电影院失败", "")
+		utils.FailureResponse(&w, "删除电影院失败", "")
 		return
 	}
 
@@ -117,7 +117,7 @@ func CinemaDeleteOne(w http.ResponseWriter, r *http.Request) {
 	// ...
 
 	Log.Notice("delete cinema successfully")
-	utils.SuccessResponse(&w, 200, "删除电影院成功", "")
+	utils.SuccessResponse(&w, "删除电影院成功", "")
 }
 
 var CinemaRoutes Routes = Routes{
