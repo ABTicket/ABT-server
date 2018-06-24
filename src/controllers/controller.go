@@ -8,15 +8,15 @@ import (
 
 type RoutesList []Routes
 
-// NewRouter register all routes defined in RoutesList
+// NewRouter() register all routes defined in RoutesList
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, routes := range routesList {
 		for _, route := range routes {
-			fmt.Println("register controller: ", route.Name, route.Method, route.Pattern)
+			fmt.Println("register controller: ", route.Name, route.Method, "/api"+route.Pattern)
 			router.
 				Methods(route.Method).
-				Path(route.Pattern).
+				Path("/api" + route.Pattern).
 				Name(route.Name).
 				Handler(route.HandlerFunc)
 		}
