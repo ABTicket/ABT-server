@@ -85,12 +85,12 @@ func UploadImg(w http.ResponseWriter, r *http.Request) {
 	err = Db["Imgs"].Insert(img)
 	if err != nil {
 		Log.Error("upload image failed: insert into db failed, ", err)
-		utils.FailureResponse(&w, 500, "新建图片失败", "")
+		utils.FailureResponse(&w, "新建图片失败", "")
 		return
 	}
 
 	Log.Notice("upload image successfully")
-	utils.SuccessResponse(&w, 200, "上传图片成功", img.ImgUrl)
+	utils.SuccessResponse(&w, "上传图片成功", img.ImgUrl)
 }
 
 func DownloadImg(w http.ResponseWriter, r *http.Request) {
