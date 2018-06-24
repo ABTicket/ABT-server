@@ -212,5 +212,6 @@ var UserRoutes Routes = Routes{
 	Route{"UserUpdatePassword", "POST", "/user/updatePassword", BasicAuth(UserUpdatePassword)},
 	// Route { "UserDeleteOne",      "DELETE", "/user/{userId}",       UserDeleteOne, },
 	Route{"UserLogin", "POST", "/user/login", UserLogin},
+	Route{"UserRegister", "POST", "/user/register", UserRegister},
 	Route{"UserLogout", "GET", "/user/logout", UserLogout},
 }
