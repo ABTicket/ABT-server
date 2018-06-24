@@ -41,7 +41,7 @@ func UserGetAll(w http.ResponseWriter, r *http.Request) {
 	utils.SuccessResponse(&w, 200, "获取用户列表成功", users)
 }
 
-// post data: {"name":"c","password":"c"}
+// post data: {"name":"c","password":"c"}, 首字母大写小写皆可
 // password需要在客户端先经过bcrypt加密
 func UserAddOne(w http.ResponseWriter, r *http.Request) {
 	// 1. load request's body
@@ -51,7 +51,7 @@ func UserAddOne(w http.ResponseWriter, r *http.Request) {
 		utils.FailureResponse(&w, 500, "新建用户失败", "")
 		return
 	}
-	// 2. verify the user existed or not 
+	// 2. verify the user existed or not
 	existedUser := User{}
 	err := Db["users"].Find(bson.M{"name": newUser.Name}).One(&existedUser)
 	if err == nil {
@@ -89,13 +89,13 @@ func UserUpdateOne(w http.ResponseWriter, r *http.Request) {
 	}
 	newUser.Id = bson.ObjectIdHex(userId)
 	// 3. 通过session验证是否有修改权限
-	/*session, _ := SessionGet(w, r, "user")
+	session, _ := SessionGet(w, r, "user")
 	sessionUser, _ := session["user"].(User)
 	if sessionUser.Id != newUser.Id {
 		Log.Error("no privilege to change user detail")
 		utils.FailureResponse(&w, 400, "没有权限修改用户信息", "")
 		return
-	}*/
+	}
 	// 4. 修改数据
 	// convert structure to bson.M, used to update
 	updateData, _ := bson.Marshal(&newUser)
@@ -193,6 +193,10 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	utils.SuccessResponse(&w, 200, "登录成功", "")
 }
 
+func UserRegister(w http.ResponseWriter, r *http.Request) {
+	UserAddOne(w, r)
+}
+
 // UserLogout should delete the session bind on request
 func UserLogout(w http.ResponseWriter, r *http.Request) {
 	_ = SessionDel(w, r, "user")
@@ -210,4 +214,3 @@ var UserRoutes Routes = Routes{
 	Route{"UserLogin", "POST", "/user/login", UserLogin},
 	Route{"UserLogout", "GET", "/user/logout", UserLogout},
 }
-
