@@ -14,3 +14,6 @@ install:
 script:
     - pwd
     - cd src/ && go run main.go
+
+service:
+    - mongodb
