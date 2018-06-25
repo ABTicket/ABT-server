@@ -15,8 +15,8 @@ install:
 
 script:
     - pwd
-    - echo $$ > /var/run/show_status.log
-    - sleep 5 && kill `cat /var/run/show_status.log` &
+    - echo $$ > ./show_status.log
+    - sleep 5 && kill `cat ./show_status.log` &
     - cd src/ && go run main.go
 
 services:
