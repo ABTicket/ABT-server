@@ -13,4 +13,4 @@ install:
 
 script:
     - pwd
-    - go run main.go
+    - cd src/ && go run main.go
