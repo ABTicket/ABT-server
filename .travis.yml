@@ -15,5 +15,5 @@ script:
     - pwd
     - cd src/ && go run main.go
 
-service:
+services:
     - mongodb
