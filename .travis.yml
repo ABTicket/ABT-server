@@ -12,4 +12,5 @@ install:
     - mkdir -p $GOPATH/src/golang.org/x/crypto && git clone https://github.com/golang/crypto $GOPATH/src/golang.org/x/crypto
 
 script:
+    - pwd
     - go run main.go
