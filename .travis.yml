@@ -15,7 +15,7 @@ install:
 
 script:
     - pwd
-    - cd src/ && go build main.go
+    - cd src/ && go build
 
 services:
     - mongodb
