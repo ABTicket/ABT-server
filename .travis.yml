@@ -19,6 +19,6 @@ before_install:
       -in id_rsa.enc -out ~/.ssh/id_rsa -d
     - chmod 600 ~/.ssh/id_rsa
 after_success:
-    - ssh ubuntu@118.89.35.145 "cd ~/ABT-server && touch test.txt"
+    - ssh ubuntu@118.89.35.145 "cd ~/ABT-server && sh ./build.sh"
 addons:
     ssh_known_hosts: 118.89.35.145 # 自己的服务器ip地址
