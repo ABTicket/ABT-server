@@ -1,4 +1,5 @@
-insert film  falied: failed to decode data from json to structure
+connecting to database failed...
+code data from json to structure
 : cinema is not existed
 insert filmShow failed: film is not existed
 sert filmShow failed: film is not existed

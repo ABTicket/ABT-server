@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
-	"html/template"
 	"io"
 	"os"
 	"strings"
@@ -45,11 +44,6 @@ func CreateDir() {
 			fmt.Printf("mkdir failed![%v]\n", err)
 		}
 	}
-}
-
-func Entrance(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("./uploadImg.html")
-	t.Execute(w, nil)
 }
 
 func UploadImg(w http.ResponseWriter, r *http.Request) {
@@ -102,5 +96,4 @@ func DownloadImg(w http.ResponseWriter, r *http.Request) {
 var ImgRoutes Routes = Routes{
 	Route{"UploadImg", "POST", "/uploadImg", UploadImg},
 	Route{"DownloadImg", "GET", "/downloadImg/{imgUrl}", DownloadImg},
-	Route{"TestUploadImg", "GET", "/testImg", Entrance},
 }

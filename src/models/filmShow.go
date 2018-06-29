@@ -6,9 +6,9 @@ import (
 )
 
 type FilmShow struct {
-	Id         bson.ObjectId `bson:"_id"`
-	FilmName   string        `bson:"filmName"`
-	CinemaName string        `bson:"cinemaName"`
-	Time       string        `bson:"time"`
+	Id       bson.ObjectId `bson:"_id"`
+	FilmId   bson.ObjectId `bson:"filmId"`
+	CinemaId bson.ObjectId `bson:"cinemaId"`
+	Time     string        `bson:"time"`
 	// Time time.Time     `bson:"time"`
 }
