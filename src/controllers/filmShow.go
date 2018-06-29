@@ -72,19 +72,12 @@ func FilmShowGetAll(w http.ResponseWriter, r *http.Request) {
 
 func FilmShowAddOne(w http.ResponseWriter, r *http.Request) {
 	// 1. load request's body
-	vars := mux.Vars(r)
-	filmId := vars["filmId"]
-	cinemaId := vars["cinemaId"]
-
 	newFilmShow := FilmShow{}
 	ok := utils.LoadRequestBody(r, "insert filmShow", &newFilmShow)
 	if !ok {
 		utils.FailureResponse(&w, "新建放映失败", "")
 		return
 	}
-	newFilmShow.FilmId = bson.ObjectIdHex(filmId)
-	newFilmShow.CinemaId = bson.ObjectIdHex(cinemaId)
-
 	// 2. verify the film existed or not
 	existedFilm := Film{}
 	err := Db["films"].FindId(newFilmShow.FilmId).One(&existedFilm)
@@ -129,8 +122,6 @@ func FilmShowUpdateOne(w http.ResponseWriter, r *http.Request) {
 	// 1. 获得URL中的参数
 	vars := mux.Vars(r)
 	filmShowId := vars["filmShowId"]
-	filmId := vars["filmId"]
-	cinemaId := vars["cinemaId"]
 	// 2. 从request中解析出body数据
 	newFilmShow := FilmShow{}
 	ok := utils.LoadRequestBody(r, "update filmShow", &newFilmShow)
@@ -138,8 +129,6 @@ func FilmShowUpdateOne(w http.ResponseWriter, r *http.Request) {
 		utils.FailureResponse(&w, "修改放映信息失败", "")
 	}
 	newFilmShow.Id = bson.ObjectIdHex(filmShowId)
-	newFilmShow.FilmId = bson.ObjectIdHex(filmId)
-	newFilmShow.CinemaId = bson.ObjectIdHex(cinemaId)
 
 	// 3. 修改数据
 	// convert structure to bson.M, used to update

@@ -1,7 +1,11 @@
-connecting to database failed...
-code data from json to structure
-: cinema is not existed
-insert filmShow failed: film is not existed
-sert filmShow failed: film is not existed
-insert filmShow failed: film is not existed
-16D6500030000006161000270617373776F7264000300000061610000)}
+insert filmShow failed: cinema is not existed
+{"filmId":"aa","cinemaId":"aa"} from json to structure
+insert filmShow falied: failed to decode data {"filmId":"aa","cinemaId":"aa", "time":"aa"} from json to structure
+insert filmShow falied: failed to decode data {"filmId":"aa","cinemaId":"aa", "time":"aa"} from json to structure
+insert filmShow falied: failed to decode data {"filmId":"67","cinemaId":"5a","time":"aa"} from json to structure
+insert filmShow falied: failed to decode data {"filmId":"5affccc15c8df52403f0cf67","cinemaId":"5affdcfa5c8df52a03b67fa","time":"aa"} from json to structure
+o decode data {"filmId":"aa","cinemaId":"aa","time":"aa"} from json to structure
+insert filmShow falied: failed to decode data [{"filmId":"aa","cinemaId":"aa","time":"aa"}] from json to structure
+insert filmShow falied: failed to decode data {"filmId":"aa","cinemaId":"aa","time":"aa"} from json to structure
+insert filmShow falied: failed to decode data [{"filmId":"aa","cinemaId":"aa","time":"aa"}] from json to structure
+insert filmShow falied: failed to decode data {"filmId":"aa","cinemaId":"aa","time":"aa"} from json to structure

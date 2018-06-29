@@ -12,18 +12,12 @@ import (
 )
 
 func OrderAddOne(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	userId := vars["userId"]
-	filmShowId := vars["filmShowId"]
-
 	newOrder := Order{}
 	ok := utils.LoadRequestBody(r, "insert order", &newOrder)
 	if !ok {
 		utils.FailureResponse(&w, "新建订单失败", "")
 		return
 	}
-	newOrder.UserId = bson.ObjectIdHex(userId)
-	newOrder.FilmShowId = bson.ObjectIdHex(filmShowId)
 
 	existedOrder := Order{}
 	err := Db["orders"].Find(bson.M{"filmShowId": newOrder.FilmShowId, "seatNum": newOrder.SeatNum}).One(&existedOrder)
@@ -81,5 +75,5 @@ func OrderGetFromUserId(w http.ResponseWriter, r *http.Request) {
 var OrderRoutes Routes = Routes{
 	Route{"OrderAddOne", "POST", "/order/", OrderAddOne},
 	Route{"OrderDeleteOne", "DELETE", "/order/", OrderDeleteOne},
-	Route{"OrderGetFromUserId", "GET", "/order/{orderId}", OrderGetFromUserId},
+	Route{"OrderGetFromUserId", "GET", "/order/{userId}", OrderGetFromUserId},
 }
