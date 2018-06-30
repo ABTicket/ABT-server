@@ -1,4 +1,5 @@
-insert filmShow failed: cinema is not existed
+user login failed: password is incorrect, 
+ed
 {"filmId":"aa","cinemaId":"aa"} from json to structure
 insert filmShow falied: failed to decode data {"filmId":"aa","cinemaId":"aa", "time":"aa"} from json to structure
 insert filmShow falied: failed to decode data {"filmId":"aa","cinemaId":"aa", "time":"aa"} from json to structure

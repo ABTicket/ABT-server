@@ -63,8 +63,8 @@ func UserAddOne(w http.ResponseWriter, r *http.Request) {
 	// 由于将User.Id解释成_id(见user定义), 所以user.Id需要自己指定, 没有这一步会导致插入失败
 	newUser.Id = bson.NewObjectId()
 	// 密码加密
-	//hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
-	//newUser.Password = string(hashedPassword)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	newUser.Password = string(hashedPassword)
 	// 4. insert into db
 	err = Db["users"].Insert(&newUser)
 	if err != nil {
