@@ -20,13 +20,21 @@ func OrderAddOne(w http.ResponseWriter, r *http.Request) {
 	}
 
 	existedOrder := Order{}
-	err := Db["orders"].Find(bson.M{"filmShowId": newOrder.FilmShowId, "seatNum": newOrder.SeatNum}).One(&existedOrder)
+	err := Db["orders"].Find(bson.M{"filmshowid": newOrder.FilmShowId, "seatNum": newOrder.SeatNum}).One(&existedOrder)
 	if err == nil {
 		Log.Errorf("insert order failed: seat %d has been sold", newOrder.SeatNum)
 		utils.FailureResponse(&w, "该场次此座位已售出", "")
 		return
 	}
+	// add a new seat
+	addSeat := SeatAddOne(newOrder)
+	if !addSeat {
+		Log.Error("insert order falied: insert seat failed, ", err)
+		utils.FailureResponse(&w, "添加座位失败", "")
+		return
+	}
 
+	// add a new order
 	newOrder.Id = bson.NewObjectId()
 
 	err = Db["orders"].Insert(&newOrder)
@@ -45,7 +53,18 @@ func OrderAddOne(w http.ResponseWriter, r *http.Request) {
 func OrderDeleteOne(w http.ResponseWriter, r *http.Request) {
 	orderId := mux.Vars(r)["orderId"]
 
-	err := Db["orders"].Remove(bson.M{"_id": bson.ObjectIdHex(orderId)})
+	// delete seat
+	deleteOrder := Order{}
+	err := Db["orders"].FindId(bson.ObjectIdHex(orderId)).One(&deleteOrder)
+	if err != nil {
+		Log.Errorf("Get deleteOrder id: %s failed, %v", orderId, err)
+		utils.FailureResponse(&w, "获取删除订单信息失败", "")
+		return
+	}
+	SeatDeleteOne(deleteOrder)
+
+	// delete order
+	err = Db["orders"].Remove(bson.M{"_id": bson.ObjectIdHex(orderId)})
 	if err != nil {
 		Log.Error("delete order from db failed: ", err)
 		utils.FailureResponse(&w, "删除订单失败", "")
@@ -74,6 +93,6 @@ func OrderGetFromUserId(w http.ResponseWriter, r *http.Request) {
 
 var OrderRoutes Routes = Routes{
 	Route{"OrderAddOne", "POST", "/order/", OrderAddOne},
-	Route{"OrderDeleteOne", "DELETE", "/order/", OrderDeleteOne},
+	Route{"OrderDeleteOne", "DELETE", "/order/{orderId}", OrderDeleteOne},
 	Route{"OrderGetFromUserId", "GET", "/order/{userId}", OrderGetFromUserId},
 }

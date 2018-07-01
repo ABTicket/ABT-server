@@ -26,5 +26,5 @@ func NewRouter() *mux.Router {
 
 // 新增加的路由，只需将其添加到此数组即可
 var routesList RoutesList = RoutesList{
-	UserRoutes, FilmRoutes, CinemaRoutes, FilmShowRoutes, ImgRoutes, OrderRoutes,
+	UserRoutes, FilmRoutes, CinemaRoutes, FilmShowRoutes, ImgRoutes, OrderRoutes, SeatRoutes,
 }

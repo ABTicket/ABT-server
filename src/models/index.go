@@ -12,7 +12,7 @@ import (
 
 var Db = make(map[string]*mgo.Collection)
 var modelsList = []string{
-	"users", "films", "cinemas", "filmShows", "Imgs", "orders",
+	"users", "films", "cinemas", "filmShows", "Imgs", "orders", "seats",
 }
 
 func gobInit() {
@@ -22,6 +22,8 @@ func gobInit() {
 	gob.Register(Cinema{})
 	gob.Register(Film{})
 	gob.Register(FilmShow{})
+	gob.Register(Order{})
+	gob.Register(Seat{})
 	gob.Register(User{})
 }
 

@@ -5,8 +5,7 @@ import (
 )
 
 type Cinema struct {
-	Id     bson.ObjectId `bson:"_id"`
-	Name   string        `bson:"name"`
-	Info   string        `bson:"info"`
-	ImgUrl string        `bson:"imgUrl"`
+	Id   bson.ObjectId `bson:"_id"`
+	Name string        `bson:"name"`
+	Info string        `bson:"info"`
 }

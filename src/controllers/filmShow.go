@@ -40,35 +40,21 @@ func FilmShowGetAll(w http.ResponseWriter, r *http.Request) {
 	utils.SuccessResponse(&w, "获取放映列表成功", filmShows)
 }
 
-// func FilmShowGetFilms(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	cinemaId := vars["cinemaId"]
+func FilmShowGetFromFilmId(w http.ResponseWriter, r *http.Request) {
+	var filmShows []FilmShow
 
-// 	var flimList []string
-// 	err := Db["filmShows"].Find(bson.M{"cinemaName": cinemaName}).Distinct("filmName", &flimList)
-// 	if err != nil {
-// 		Log.Errorf("get flimList failed, %v", err)
-// 		utils.FailureResponse(&w, "获取电影列表失败", "")
-// 		return
-// 	}
-// 	Log.Notice("get flimList successfully")
-// 	utils.SuccessResponse(&w, "获取电影列表成功", flimList)
-// }
+	vars := mux.Vars(r)
+	filmId := vars["filmId"]
 
-// func FilmShowGetCinemas(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	filmName := vars["filmName"]
-
-// 	var cinemaList []string
-// 	err := Db["filmShows"].Find(bson.M{"filmName": filmName}).Distinct("cinemaName", &cinemaList)
-// 	if err != nil {
-// 		Log.Errorf("get cinemaList failed, %v", err)
-// 		utils.FailureResponse(&w, "获取电影院列表失败", "")
-// 		return
-// 	}
-// 	Log.Notice("get cinemaList successfully")
-// 	utils.SuccessResponse(&w, "获取电影院列表成功", cinemaList)
-// }
+	err := Db["filmShows"].Find(bson.M{"filmId": bson.ObjectIdHex(filmId)}).All(&filmShows)
+	if err != nil {
+		Log.Errorf("get filmShows failed, %v", err)
+		utils.FailureResponse(&w, "获取放映列表失败", "")
+		return
+	}
+	Log.Notice("get filmShows successfully")
+	utils.SuccessResponse(&w, "获取放映列表成功", filmShows)
+}
 
 func FilmShowAddOne(w http.ResponseWriter, r *http.Request) {
 	// 1. load request's body
@@ -79,16 +65,16 @@ func FilmShowAddOne(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 2. verify the film existed or not
-	existedFilm := Film{}
+	/*existedFilm := Film{}
 	err := Db["films"].FindId(newFilmShow.FilmId).One(&existedFilm)
 	if err != nil {
 		Log.Errorf("insert filmShow failed: film is not existed")
 		utils.FailureResponse(&w, "电影不存在", "")
 		return
-	}
+	}*/
 	// 3. verify the film existed or not
 	existedCinema := Cinema{}
-	err = Db["cinemas"].FindId(newFilmShow.CinemaId).One(&existedCinema)
+	err := Db["cinemas"].FindId(newFilmShow.CinemaId).One(&existedCinema)
 	if err != nil {
 		Log.Errorf("insert filmShow failed: cinema is not existed")
 		utils.FailureResponse(&w, "电影院不存在", "")
@@ -165,8 +151,7 @@ func FilmShowDeleteOne(w http.ResponseWriter, r *http.Request) {
 var FilmShowRoutes Routes = Routes{
 	Route{"FilmShowGetOne", "GET", "/filmShow/{filmShowId}", FilmShowGetOne},
 	Route{"FilmShowGetAll", "GET", "/filmShow", FilmShowGetAll},
-	//Route{"FilmShowGetFilms", "GET", "/filmShow/cinema/{cinemaName}", FilmShowGetFilms},
-	//Route{"FilmShowGetCinemas", "GET", "/filmShow/film/{filmName}", FilmShowGetCinemas},
+	Route{"FilmShowGetFromFilmId", "GET", "/filmShow/film/{filmId}", FilmShowGetFromFilmId},
 	Route{"FilmShowAddOne", "POST", "/filmShow/", FilmShowAddOne},
 	Route{"FilmShowUpdateOne", "PUT", "/filmShow/{filmShowId}", FilmShowUpdateOne},
 	Route{"FilmShowDeleteOne", "DELETE", "/filmShow/{filmShowId}", FilmShowDeleteOne},
