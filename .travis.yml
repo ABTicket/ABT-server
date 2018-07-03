@@ -1,7 +1,6 @@
 language: go
 go:
     - '1.10'
-    - dev
 sudo: required
 # install先安装依赖
 install:
