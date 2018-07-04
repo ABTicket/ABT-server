@@ -12,18 +12,19 @@ import (
 
 var Db = make(map[string]*mgo.Collection)
 var modelsList = []string{
-	"users", "films", "cinemas", "filmShows", "Imgs", "orders", "seats",
+	"cinemas",
+	"films",
+	"filmShows",
+	"Imgs",
+	"orders",
+	"seats",
+	"users",
 }
 
 func gobInit() {
 	// 已知bug，session中要保存自定义的结构体
 	// 目前只能通过gob.Resister解决
 	// see: https://github.com/astaxie/beego/issues/1110
-	gob.Register(Cinema{})
-	gob.Register(Film{})
-	gob.Register(FilmShow{})
-	gob.Register(Order{})
-	gob.Register(Seat{})
 	gob.Register(User{})
 }
 

@@ -1,4 +1,5 @@
-insert order failed: seat 999 has been sold
+connecting to database failed...
+ been sold
 from json to structure
 5143fe02caa", "filmShowId":"5b374d995c8df541b6c5b202", "seatNum":"13"} from json to structure
  to decode data  from json to structure

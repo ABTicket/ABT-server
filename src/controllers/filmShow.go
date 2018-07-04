@@ -1,15 +1,67 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 
+	"time"
+
 	. "../log"
 	. "../models"
 	"../utils"
 )
+
+// 用来存储保存电影场次的请求的请求体
+type FilmIds struct {
+	ids  []string
+	days int
+}
+
+var filmShowTimes = []string{" 08:30:00", " 11:00:00", " 14:00:00", " 17:30:00", " 21:00:00"}
+
+// request: {"ids": [], days: 1}
+// ids为添加的电影豆瓣上id列表,days表示添加包括今天在内days天的场次信息
+func FilmShowSaveAll(w http.ResponseWriter, r *http.Request) {
+	filmIds := FilmIds{}
+	ok := utils.LoadRequestBody(r, "save filmShow", &filmIds)
+	if !ok {
+		utils.FailureResponse(&w, "建立电影场次失败", "")
+		return
+	}
+	// 生成场次
+	filmShows := []FilmShow{}              // 存储要添加的filmShow
+	formatTimeStr := "2017-04-11 13:33:37" // 要解析的时间字符串的格式
+	prevDay, _ := time.ParseDuration("-24h")
+	nextDay, _ := time.ParseDuration("24h")
+	today := time.Now().Add(prevDay)
+	for _, filmId := range filmIds.ids {
+		// 对每一部电影添加场次信息
+		for i := 0; i < filmIds.days; i++ {
+			// 添加指定的每一天的信息
+			today = today.Add(nextDay)
+			todayDate := fmt.Sprintf("%v-%v-%v", today.Year(), today.Month(), today.Day())
+			for _, showTime := range filmShowTimes {
+				// 每一天的每个时间段
+				targetTime := todayDate + showTime
+				theTime, _ := time.Parse(formatTimeStr, targetTime)
+				filmShows = append(filmShows, FilmShow{bson.NewObjectId(), filmId, "", theTime.Unix()})
+			}
+		}
+	}
+	// 更新数据库
+	for _, newFilmShow := range filmShows {
+		_, err := Db["filmShows"].Upsert(bson.M{"filmId":newFilmShow.FilmId}, newFilmShow)
+		if err != nil {
+			Log.Debugf("upsert filmShow failed: %v, data: %v", err, newFilmShow)
+		}
+	}
+	// 成功返回
+	Log.Notice("建立电影场次信息成功")
+	utils.SuccessResponse(&w, "FilmShowSaveAll", filmShows)
+}
 
 func FilmShowGetOne(w http.ResponseWriter, r *http.Request) {
 	// GET, 从URL中读取参数, 直接使用mux.Vars(r)

@@ -57,7 +57,7 @@ func UserAddOne(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		Log.Errorf("insert user failed: user %s is existed", newUser.Name)
 		utils.FailureResponse(&w, "用户已存在", "")
-		return
+
 	}
 	// 3. set a new id
 	// 由于将User.Id解释成_id(见user定义), 所以user.Id需要自己指定, 没有这一步会导致插入失败

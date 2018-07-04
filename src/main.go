@@ -15,6 +15,7 @@ func init() {
 
 func main() {
 	router := controllers.NewRouter()
-	http.ListenAndServe(configs.HOST+":"+configs.PORT, router)
-	fmt.Println("start server...")
+	addr := configs.HOST + ":" + configs.PORT
+	fmt.Printf("start server at %v...\n", addr)
+	http.ListenAndServe(addr, router)
 }

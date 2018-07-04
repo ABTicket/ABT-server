@@ -6,10 +6,8 @@ import (
 )
 
 type Order struct {
-	Id         bson.ObjectId `bson:"_id"`
-	UserId     bson.ObjectId `bson:"userId"`
-	FilmShowId bson.ObjectId `bson:'filmShowId'`
-	SeatNum    int           `bson:"seatNum"`
-	// CreateTime time.Time     `bson:"createTime"`
-	CreateTime string `bson:"createTime"`
+	Id         bson.ObjectId   `bson:"_id"`
+	UserId     bson.ObjectId   `bson:"userId"`
+	Tickets    []bson.ObjectId `bson:"tickets"`
+	CreateTime int64           `bson:"createTime"`
 }
